@@ -26,4 +26,4 @@ def validate_metadata(meta_file, warnings_file="warnings.txt"):
         print("✅ All positions are valid!")
 
 if __name__ == "__main__":
-    validate_metadata("metadata.csv")
+    validate_metadata("dataset/metadata.csv")
