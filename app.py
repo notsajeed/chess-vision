@@ -1,4 +1,5 @@
 import subprocess
+import chess
 
 stockfish_path = r"C:\Users\sajee\stockfish\stockfish-windows-x86-64-avx2.exe"
 
@@ -10,35 +11,58 @@ engine = subprocess.Popen(
 )
 
 def send_command(cmd):
-    engine.stdin.write(cmd+ '\n')
+    engine.stdin.write(str(cmd)+ '\n')
     engine.stdin.flush()
 
-def read_until_bestmove():
+def get_bestmove():
     while True:
         line = engine.stdout.readline().strip()
         if line:
             print(line)
         if "bestmove" in line:
-            break
+            return line.split()[1]
+
+color_choice = input("Play as White or Black? (w/b):").strip().lower()
+play_white = (color_choice == "w")
+
+fen_choice = input("Start from FEN? (y/n):").strip().lower()
+if fen_choice == "y":
+    fen = input("Enter FEN: ").strip()
+    board = chess.Board(fen)
+else:
+    board = chess.Board()
 
 send_command("uci")
 send_command("isready")
 
-moves = []
+while not board.is_game_over():
+    print("\n Current Board")
+    print(board)
+    print()
 
-while True:
-    if moves:
-        send_command(f"position startpos moves {' '.join(str(m) for m in moves)}")
+    if(board.turn == chess.WHITE and play_white) or (board.turn == chess.BLACK and not play_white):
+        move_uci = input("Your move :").strip()
+        if move_uci.lower() == "quit":
+            break
+        try:
+            move = chess.Move.from_uci(move_uci)
+            if move in board.legal_moves:
+                board.push(move)
+            else:
+                print("Illegal move. Try again")
+                continue
+        except:
+            print("Invalid move format Try again")
+            continue
     else:
-        send_command("position startops")
+        send_command(f"position fen {board.fen()}")
+        send_command("go depth 12")
+        best_move = get_bestmove()
+        print(f"Stock fish plays {best_move}")
 
-    send_command("go depth 12")
-    best_move = read_until_bestmove()
-    print(f"\n StockFish plays: {best_move}\n")
+        board.push(chess.Move.from_uci(best_move))
+        print("\n Game Over")
+        print(board.result())                
 
-    moves.append(best_move)
-
-    opponents_move = input("Enter opponents move (or 'quit): ").strip()
-    if opponents_move.lower() == "quit":
-        break
-    moves.append(opponents_move)
+# r1bq1rk1/ppp2ppp/2np1n2/4p1B1/2B1P3/2NP1N2/PPP2PPP/R2Q1RK1 w - - 0 8  
+# 8/8/8/4k3/4P3/8/4K3/8 w - - 0 1
