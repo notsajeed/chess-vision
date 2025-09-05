@@ -63,6 +63,3 @@ while not board.is_game_over():
         board.push(chess.Move.from_uci(best_move))
         print("\n Game Over")
         print(board.result())                
-
-# r1bq1rk1/ppp2ppp/2np1n2/4p1B1/2B1P3/2NP1N2/PPP2PPP/R2Q1RK1 w - - 0 8  
-# 8/8/8/4k3/4P3/8/4K3/8 w - - 0 1
