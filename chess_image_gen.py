@@ -1,31 +1,3 @@
-#!/usr/bin/env python3
-"""
-Chess Position Image Generator
-
-Generates PNG images of chess positions (from FEN or randomly sampled legal
-positions) with a visual style inspired by chess.com (green/tan squares).
-
-Feature set
-- Validates FENs and ensures positions are legal using python-chess
-- Optionally samples random legal positions by playing a random playout
-- Renders with Pillow, using either:
-    1) Unicode chess glyphs (requires a font with chess glyphs, e.g. DejaVu Sans)
-    2) A sprite pack directory containing PNGs named like "wp.png, bn.png, ..."
-- Coordinates, board flip, margins, and square sizes are configurable
-
-Dependencies
-    pip install pillow python-chess
-
-Usage
-    python chess_image_gen.py --fen "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3" --out sample.png
-    python chess_image_gen.py --random 60 --out random.png
-
-Sprite packs (optional)
-Provide a directory of 12 PNGs named according to piece symbols:
-    White: wk.png, wq.png, wr.png, wb.png, wn.png, wp.png
-    Black: bk.png, bq.png, br.png, bb.png, bn.png, bp.png
-Each sprite will be scaled to fit the square size.
-"""
 
 from __future__ import annotations
 import argparse

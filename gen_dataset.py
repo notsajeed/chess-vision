@@ -9,11 +9,16 @@ def generate_dataset(n, out_dir, sq=256, sprites=None):
 
     with open(meta_path, "w", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(["id", "fen", "turn"])  # add more cols if needed
+        writer.writerow([
+            "id", "fen", "turn", "move_number",
+            "castling_rights", "en_passant",
+            "is_check", "is_game_over"
+        ])
 
         for i in tqdm(range(1, n+1)):
             fen = random_legal_fen()
             img_file = f"{i:06d}.png"
+
             render_position(
                 fen=fen,
                 out_path=os.path.join(out_dir, "images", img_file),
@@ -23,8 +28,19 @@ def generate_dataset(n, out_dir, sq=256, sprites=None):
                 show_coordinates=False,
                 sprite_dir=sprites
             )
+
             board = chess.Board(fen)
-            writer.writerow([img_file, fen, board.turn])
+
+            writer.writerow([
+                img_file,
+                fen,
+                board.turn,                 # True = White, False = Black
+                board.fullmove_number,      # Fullmove counter
+                board.castling_xfen(),      # Castling rights
+                board.ep_square if board.ep_square else "-",  # En passant square
+                board.is_check(),
+                board.is_game_over()
+            ])
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
